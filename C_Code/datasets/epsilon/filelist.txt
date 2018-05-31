@@ -1,0 +1,4 @@
+ftp://largescale.ml.tu-berlin.de/largescale/epsilon/epsilon_train.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/epsilon/epsilon_train.lab.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/epsilon/epsilon_test.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/epsilon/epsilon_val.dat.bz2

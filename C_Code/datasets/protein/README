@@ -1,0 +1,11 @@
+Source: http://osmot.cs.cornell.edu/kddcup/datasets.html.
+Files: bio_train.dat, bio_test.dat.
+(Need to register before you can download the files.)
+
+Preprocessing:
+1) Remove columns 1 and 2 (BLOCK_ID and EXAMPLE_ID).
+2) Treat column 3 as labels. Convert them from {0, 1} to {-1, 1}.
+3) Scale each feature to [-1, 1].
+
+Samples: 145,751.
+Features: 74.

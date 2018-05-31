@@ -1,0 +1,6 @@
+Source: http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass.html#mnist8m.
+
+Preprocessing: separate digits 0,1,2,3,4 (label -1) from 5,6,7,8,9 (label +1).
+
+Samples: 8,100,000.
+Features: 784.

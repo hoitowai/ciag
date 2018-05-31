@@ -1,0 +1,13 @@
+Source: https://archive.ics.uci.edu/ml/datasets/Gisette.
+
+Preprocessing:
+1) Remove the following features because they are constant (counting from 0):
+111, 119, 196, 421, 479, 793, 876, 1037, 1040, 1179, 1267,
+1639, 1736, 1792, 1835, 1904, 2022, 2086, 2198, 2248, 2348,
+2585, 2604, 2686, 2691, 2811, 2901, 2909, 2952, 3007, 3026,
+3157, 3193, 3476, 3556, 3631, 3706, 3745, 3864, 4066, 4100,
+4255, 4388, 4872, 4964.
+2) Scale each feature to [-1, 1].
+
+Samples: 6,000.
+Features: 4,955.

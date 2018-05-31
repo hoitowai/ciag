@@ -1,0 +1,4 @@
+ftp://largescale.ml.tu-berlin.de/largescale/ocr/ocr_train.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/ocr/ocr_train.lab.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/ocr/ocr_test.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/ocr/ocr_val.dat.bz2

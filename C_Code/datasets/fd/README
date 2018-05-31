@@ -1,0 +1,7 @@
+Source: http://largescale.ml.tu-berlin.de/instructions/.
+
+Run convert.py to obtain the svm-light format:
+$ ./convert.py fd train -o fd_train.txt
+
+Samples: 5,469,800.
+Features: 900.

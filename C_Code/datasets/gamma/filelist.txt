@@ -1,0 +1,4 @@
+ftp://largescale.ml.tu-berlin.de/largescale/gamma/gamma_train.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/gamma/gamma_train.lab.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/gamma/gamma_test.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/gamma/gamma_val.dat.bz2

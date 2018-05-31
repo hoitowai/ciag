@@ -1,0 +1,4 @@
+ftp://largescale.ml.tu-berlin.de/largescale/beta/beta_train.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/beta/beta_train.lab.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/beta/beta_test.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/beta/beta_val.dat.bz2

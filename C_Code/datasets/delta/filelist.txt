@@ -1,0 +1,4 @@
+ftp://largescale.ml.tu-berlin.de/largescale/delta/delta_train.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/delta/delta_train.lab.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/delta/delta_test.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/delta/delta_val.dat.bz2

@@ -1,0 +1,2 @@
+http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/w8a
+http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/w8a.t

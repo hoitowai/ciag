@@ -1,0 +1,4 @@
+ftp://largescale.ml.tu-berlin.de/largescale/zeta/zeta_train.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/zeta/zeta_train.lab.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/zeta/zeta_test.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/zeta/zeta_val.dat.bz2

@@ -1,0 +1,7 @@
+Source: http://largescale.ml.tu-berlin.de/instructions/.
+
+Run convert.py to obtain the svm-light format:
+$ ./convert.py ocr train -o ocr_train.txt
+
+Samples: 3,500,000.
+Features: 1,156.

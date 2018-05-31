@@ -1,0 +1,4 @@
+https://archive.ics.uci.edu/ml/machine-learning-databases/gisette/GISETTE/gisette_train.data
+https://archive.ics.uci.edu/ml/machine-learning-databases/gisette/GISETTE/gisette_train.labels
+https://archive.ics.uci.edu/ml/machine-learning-databases/gisette/GISETTE/gisette_test.data
+https://archive.ics.uci.edu/ml/machine-learning-databases/gisette/GISETTE/gisette_valid.data

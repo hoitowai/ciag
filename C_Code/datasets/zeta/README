@@ -1,0 +1,6 @@
+Source: http://largescale.ml.tu-berlin.de/instructions/.
+
+Preprocessing: scale each feature to [-1, 1].
+
+Samples: 500,000.
+Features: 2,000.

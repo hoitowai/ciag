@@ -1,0 +1,7 @@
+Source: http://largescale.ml.tu-berlin.de/instructions/.
+
+Run convert.py to obtain the svm-light format:
+$ ./convert.py dna train -o dna_train.txt
+
+Samples: 50,000,000.
+Features: 800 (after preprocessing).

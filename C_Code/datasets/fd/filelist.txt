@@ -1,0 +1,4 @@
+ftp://largescale.ml.tu-berlin.de/largescale/fd/fd_train.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/fd/fd_train.lab.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/fd/fd_test.dat.bz2
+ftp://largescale.ml.tu-berlin.de/largescale/fd/fd_val.dat.bz2

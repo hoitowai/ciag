@@ -1,0 +1,14 @@
+Source: http://osmot.cs.cornell.edu/kddcup/datasets.html.
+Files: phy_train.dat, phy_test.dat.
+(Need to register before you can download the files.)
+
+Preprocessing:
+1) Remove column 1 (EXAMPLE_ID).
+2) Remove columns 22, 23, 24 and 46, 47, 48, and 31, 57 because those features may contain missing values.
+3) Remove columns 49, 50, 51, 52, 53 because they are constant.
+4) Treat column 2 as labels. Convert them from {0, 1} to {-1, 1}.
+5) Scale all the features to [-1, 1].
+Columns are enumerated from 1.
+
+Samples: 50,000.
+Features: 65.

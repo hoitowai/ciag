@@ -1,0 +1,6 @@
+Source: http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html#cod-rna.
+
+Preprocessing: scale each feature to [-1, 1].
+
+Samples: 59,535 / 271,617 (validation) / 157,413 (unused/remaining).
+Features: 8.
