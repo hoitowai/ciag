@@ -6,7 +6,7 @@ The C++ programs are developed from the code base in https://github.com/arodoman
 
 # Usage of the MATLAB programs
 
-For synthetic data only. The main program can be found in "main_sim.m" with the parameters specified in the source code.
+For synthetic data only. The main program can be found in "main_sim.m". The parameters for different algorithms are specified within the source code.
 
 <b>Warning</b>: Be reminded that most of the implementation have not been fully optimized.
 
@@ -18,10 +18,12 @@ The dataset are not included on github. They have to be downloaded independently
 
 Example 1: executing
 - ./main --method CIAG --dataset a9a --max_epochs 100 --minibatch_size 5
+
 runs the CIAG method on the dataset a9a with a minibatch size of 5, with a default step size of 0.0001 / L.
 
 Example 2: executing
 - ./main --method ACIAG --dataset a9a --max_epochs 100 --minibatch_size 5 --kappa 0.00015 --beta 0.95
+
 runs the A-CIAG method on the dataset a9a with a minibatch size of 5, with a step size of 0.00015 / L and extrapolation rate of 0.95.
 
 The program has been compiled and tested on a computer running MacOS X 10.13 with gcc 4.2.1.
