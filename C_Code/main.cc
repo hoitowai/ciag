@@ -21,6 +21,8 @@ int main(int argc, char* argv[])
     std::string init_scheme = "";
     std::string output_filename = "";
     double lambda = -1;
+    double epoch_size = 1.0;
+    int epoch = 1;
     int minibatch_size = 1;
     double max_epochs = 1.0;
     double n_logs_per_epoch = -1;
@@ -56,6 +58,11 @@ int main(int argc, char* argv[])
             "", "minibatch_size",
             "Minibatch size (default: 1). This parameter has no effect on non-incremental methods.",
             false, minibatch_size, "int"
+        );
+        TCLAP::ValueArg<double> arg_epoch_size(
+            "", "epoch_size",
+            "Epoch size as multiples of datasize (default: 1.0)",
+            false, epoch_size, "double"
         );
         TCLAP::ValueArg<double> arg_max_epochs(
             "", "max_epochs",
@@ -128,6 +135,7 @@ int main(int argc, char* argv[])
         cmd.add(arg_kappa);
         cmd.add(arg_max_epochs);
         cmd.add(arg_minibatch_size);
+        cmd.add(arg_epoch_size);
         cmd.add(arg_lambda);
         cmd.add(arg_dataset);
         cmd.add(arg_method);
@@ -140,6 +148,7 @@ int main(int argc, char* argv[])
         dataset = arg_dataset.getValue();
         lambda = arg_lambda.getValue();
         minibatch_size = arg_minibatch_size.getValue();
+        epoch_size = arg_epoch_size.getValue();
         max_epochs = arg_max_epochs.getValue();
         n_logs_per_epoch = arg_n_logs_per_epoch.getValue();
         alpha = arg_alpha.getValue();
@@ -254,7 +263,7 @@ int main(int argc, char* argv[])
     }
     /* maximum number of iterations */
     size_t maxiter;
-    if (method == "SGD" || method == "SAG" || method == "NIM" || method == "CIAG" || method == "ACIAG" ) { // incremental methods
+    if (method == "SGD" || method == "SAG" || method == "ASVRG" || method == "SAGA" || method == "NIM" || method == "CIAG" || method == "ACIAG" ) { // incremental methods
         maxiter = max_epochs * size_t(ceil(double(Z.rows()) / minibatch_size));
     } else { // non-incremental methods, one iteration >= one epoch
         maxiter = max_epochs;
@@ -269,6 +278,8 @@ int main(int argc, char* argv[])
     if (alpha == -1) { // if not set up yet
         if (method == "SAG") { // use alpha=1/L by default
             alpha = 1.0 / L;
+        } else if (method == "SAGA" || method == "ASVRG") {
+            alpha = 0.5 / L;
         } else if (method == "CIAG" || method == "ACIAG" || method == "FGD" ) {
           // alpha = (2.0 / (L + lambda));
           alpha =  Z.rows() * kappa / L;
@@ -283,7 +294,7 @@ int main(int argc, char* argv[])
     }
     /* sampling scheme */
     if (sampling_scheme == "") { // if not set up yet
-        if (method == "SAG" || method == "SGD") {
+        if (method == "SAG" || method == "SAGA" || method == "SGD") {
             sampling_scheme = "random";
         } else {
             sampling_scheme = "cyclic";
@@ -292,6 +303,12 @@ int main(int argc, char* argv[])
     /* initialisation scheme */
     if (init_scheme == "") { // if not set up yet
         init_scheme = "self-init";
+    }
+    /* epoch size */
+    if (method == "ASVRG") {
+        epoch = round( epoch_size*Z.rows() );
+        beta = 0.9;
+        fprintf(stderr, "epoch size = %d\n", epoch);
     }
 
     /* =============================== Run optimiser ======================================= */
@@ -308,6 +325,20 @@ int main(int argc, char* argv[])
 
         /* rum method */
         SAG(func, logger, w0, maxiter, alpha, sampling_scheme, init_scheme);
+    } else if (method == "SAGA") {
+        /* print summary */
+        fprintf(stderr, "Use method SAGA: alpha=%g, sampling_scheme=%s, init_scheme=%s\n",
+                alpha, sampling_scheme.c_str(), init_scheme.c_str());
+
+        /* rum method */
+        SAGA(func, logger, w0, maxiter, alpha, sampling_scheme, init_scheme);
+    } else if (method == "ASVRG") {
+        /* print summary */
+        fprintf(stderr, "Use method ASVRG: alpha=%g, sampling_scheme=%s, init_scheme=%s\n",
+                alpha, sampling_scheme.c_str(), init_scheme.c_str());
+
+        /* rum method */
+        ASVRG(func, logger, w0, maxiter, epoch, alpha, beta, sampling_scheme, init_scheme);
     } else if (method == "SGD") {
         /* print summary */
         fprintf(stderr, "Use method SGD: alpha=%g, sampling_scheme=%s\n", alpha, sampling_scheme.c_str());
@@ -370,7 +401,7 @@ int main(int argc, char* argv[])
         sprintf(out_filename, "output/%s", output_filename.c_str());
     } else {
         std::string prefix = lambda ? "l2" : "l1";
-        if (method == "SAG" || method == "SGD" || method == "NIM" || method == "CIAG" || method == "ACIAG" ) { // incremental methods
+        if (method == "SAG" || method == "SAGA" || method == "ASVRG" || method == "SGD" || method == "NIM" || method == "CIAG" || method == "ACIAG" ) { // incremental methods
           if ( method == "NIM" ) {
             sprintf(out_filename, "output/%s.%s.%s.minibatch_size=%d.exact=%d.dat", prefix.c_str(), dataset.c_str(), method.c_str(), minibatch_size, exact);
           } else {

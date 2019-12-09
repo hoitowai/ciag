@@ -193,6 +193,210 @@ Eigen::VectorXd SAG(const LogRegOracle& func, Logger& logger, const Eigen::Vecto
 }
 
 /* ****************************************************************************************************************** */
+/* *************************************************** SAGA ********************************************************** */
+/* ****************************************************************************************************************** */
+void saga_init_model(const LogRegOracle& func, int j, const Eigen::VectorXd& w,
+                      std::vector<Eigen::VectorXd>& phi_prime_list, Eigen::VectorXd& g)
+{
+    /* assign useful variables */
+    const int n = func.n_samples();
+    auto Z_minibatch = func.get_jth_submatrix(j);
+
+    /* compute phi_prime_new = phi'(z_i' * w) */
+    Eigen::VectorXd mu = Z_minibatch * w;
+    Eigen::VectorXd phi_prime_new = func.phi_prime(mu);
+
+    /* update g: g += 1/N delta_phi_prime * z_i */
+    Eigen::VectorXd delta_phi_prime = phi_prime_new - phi_prime_list[j];
+    g += (1.0 / n) * Z_minibatch.transpose() * delta_phi_prime;
+
+    /* update model */
+    phi_prime_list[j] = phi_prime_new;
+}
+
+void saga_update_model(const LogRegOracle& func, int j, const Eigen::VectorXd& w,
+                      std::vector<Eigen::VectorXd>& phi_prime_list, Eigen::VectorXd& g, Eigen::VectorXd& g_use)
+{
+    /* assign useful variables */
+    const int n = func.n_samples();
+    auto Z_minibatch = func.get_jth_submatrix(j);
+
+    /* compute phi_prime_new = phi'(z_i' * w) */
+    Eigen::VectorXd mu = Z_minibatch * w;
+    Eigen::VectorXd phi_prime_new = func.phi_prime(mu);
+
+    /* update g: g += 1/N delta_phi_prime * z_i */
+    Eigen::VectorXd delta_phi_prime = phi_prime_new - phi_prime_list[j];
+    g_use = g + Z_minibatch.transpose() * delta_phi_prime;
+    g += (1.0 / n) * Z_minibatch.transpose() * delta_phi_prime;
+
+    /* update model */
+    phi_prime_list[j] = phi_prime_new;
+}
+
+Eigen::VectorXd SAGA(const LogRegOracle& func, Logger& logger, const Eigen::VectorXd& w0, size_t maxiter, double alpha,
+                    const std::string& sampling_scheme, const std::string& init_scheme)
+{
+    /* assign useful variables */
+    const int n_minibatches = func.get_n_minibatches();
+    const int d = w0.size();
+    const double lambda = func.lambda;
+
+    /* assign starting point */
+    Eigen::VectorXd w = w0;
+
+    /* initialise index sampler */
+    IndexSampler sampler(n_minibatches, sampling_scheme);
+
+    /* initialisation */
+    std::vector<Eigen::VectorXd> phi_prime_list(n_minibatches); // coefficients phi_prime(i) = phi'(z_i' * v_i)
+    for (int j = 0; j < n_minibatches; ++j) {
+        phi_prime_list[j] = Eigen::VectorXd::Zero(func.get_jth_minibatch_size(j));
+    }
+
+    Eigen::VectorXd g = Eigen::VectorXd::Zero(d); // average gradient g = 1/N sum_i nabla f_i(v_i)
+    Eigen::VectorXd g_use = Eigen::VectorXd::Zero(d); // actually used gradient
+
+    if (init_scheme == "self-init") {
+        /* nothing to do here, everything will be done in the main loop */
+    } else if (init_scheme == "full") {
+        /* initialise all the components of the model at w0 */
+        for (int j = 0; j < n_minibatches; ++j) {
+            /* update the current component of the model */
+            saga_init_model(func, j, w0, phi_prime_list, g);
+            /* don't cheat, call the logger because initialisation counts too */
+            if (logger.log(w0, func.get_jth_minibatch_size(j))) break;
+        }
+    } else {
+        fprintf(stderr, "Unknown initialisation scheme.\n");
+        throw 1;
+    }
+
+    /* log initial position (only for aesthetic purposes) */
+    logger.log(w);
+
+    /* main loop */
+    for (size_t iter = 0; iter < maxiter; ++iter) {
+        /* select next index */
+        int j = sampler.sample();
+
+        /* update the i-th component of the model */
+        saga_update_model(func, j, w, phi_prime_list, g, g_use);
+
+        /* make a step w -= alpha * (g + lambda * w) */
+        // w = func.prox1(w - alpha * (g + lambda * w), alpha);
+        w -= alpha*( g_use + lambda * w );
+
+        /* log current position */
+        if (logger.log(w, func.get_jth_minibatch_size(j))) break;
+    }
+
+    return w;
+}
+
+/* ****************************************************************************************************************** */
+/* *************************************************** ASVRG ********************************************************** */
+/* ****************************************************************************************************************** */
+void asvrg_init_model(const LogRegOracle& func, int j, const Eigen::VectorXd& w,
+                      std::vector<Eigen::VectorXd>& phi_prime_list, Eigen::VectorXd& g)
+{
+    /* assign useful variables */
+    const int n = func.n_samples();
+    auto Z_minibatch = func.get_jth_submatrix(j);
+
+    /* compute phi_prime_new = phi'(z_i' * w) */
+    Eigen::VectorXd mu = Z_minibatch * w;
+    Eigen::VectorXd phi_prime_new = func.phi_prime(mu);
+
+    g += (1.0 / n) * Z_minibatch.transpose() * phi_prime_new;
+
+    /* update model */
+    phi_prime_list[j] = phi_prime_new;
+}
+
+void asvrg_update_model(const LogRegOracle& func, int j, const Eigen::VectorXd& w,
+                      std::vector<Eigen::VectorXd>& phi_prime_list, Eigen::VectorXd& g, Eigen::VectorXd& g_use)
+{
+    /* assign useful variables */
+    const int n = func.n_samples();
+    auto Z_minibatch = func.get_jth_submatrix(j);
+
+    /* compute phi_prime_new = phi'(z_i' * w) */
+    Eigen::VectorXd mu = Z_minibatch * w;
+    Eigen::VectorXd phi_prime_new = func.phi_prime(mu);
+
+    /* update g: g += 1/N delta_phi_prime * z_i */
+    Eigen::VectorXd delta_phi_prime = phi_prime_new - phi_prime_list[j];
+    g_use = g + Z_minibatch.transpose() * delta_phi_prime;
+}
+
+Eigen::VectorXd ASVRG(const LogRegOracle& func, Logger& logger, const Eigen::VectorXd& w0, size_t maxiter, size_t epoch, double alpha, double beta,
+                    const std::string& sampling_scheme, const std::string& init_scheme)
+{
+    /* assign useful variables */
+    const int n_minibatches = func.get_n_minibatches();
+    const int d = w0.size();
+    const double lambda = func.lambda;
+
+    /* assign starting point */
+    Eigen::VectorXd w = w0;
+    Eigen::VectorXd w1 = w0;
+
+    Eigen::VectorXd w_e = w0;
+    Eigen::VectorXd w_old = w0;
+
+    /* initialise index sampler */
+    IndexSampler sampler(n_minibatches, sampling_scheme);
+
+    /* initialisation */
+    std::vector<Eigen::VectorXd> phi_prime_list(n_minibatches); // coefficients phi_prime(i) = phi'(z_i' * v_i)
+    for (int j = 0; j < n_minibatches; ++j) {
+        phi_prime_list[j] = Eigen::VectorXd::Zero(func.get_jth_minibatch_size(j));
+    }
+
+    Eigen::VectorXd g = Eigen::VectorXd::Zero(d); // average gradient g = 1/N sum_i nabla f_i(v_i)
+    Eigen::VectorXd g_use = Eigen::VectorXd::Zero(d); // actually used gradient
+
+    /* log initial position (only for aesthetic purposes) */
+    logger.log(w);
+
+    size_t max_e = round(maxiter / epoch); /* no. of epochs */
+    bool flag_break = false;
+
+    /* main loop */
+    for (size_t iter = 0; iter < max_e; ++iter) {
+        /* outer loop to count */
+        g = Eigen::VectorXd::Zero(d);
+        for (size_t j = 0; j < n_minibatches; ++j) {
+            /* update the current component of the model */
+            asvrg_init_model(func, j, w, phi_prime_list, g);
+            /* don't cheat, call the logger because initialisation counts too */
+            if (logger.log(w, func.get_jth_minibatch_size(j))) break;
+        }
+        for (size_t i_iter = 0; i_iter < epoch; i_iter++) {
+            /* select next index for the SVRG inner loop */
+            int j = sampler.sample();
+
+            /* update the i-th component of the model */
+            asvrg_update_model(func, j, w_e, phi_prime_list, g, g_use);
+
+            w_old = w;
+            w -= alpha*( g_use + lambda * w );
+            w_e = w + beta*( w - w_old );
+
+            /* log current position */
+            if (logger.log(w, func.get_jth_minibatch_size(j))) {
+                flag_break = true; break;
+            }
+        }
+        if (flag_break) break;
+
+    }
+
+    return w;
+}
+
+/* ****************************************************************************************************************** */
 /* *************************************************** NIM ********************************************************** */
 /* ****************************************************************************************************************** */
 void nim_update_model(const LogRegOracle& func, int j, const Eigen::VectorXd& w,

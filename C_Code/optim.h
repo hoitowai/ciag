@@ -16,6 +16,14 @@ Eigen::VectorXd SGD(const LogRegOracle& func, Logger& logger, const Eigen::Vecto
 Eigen::VectorXd SAG(const LogRegOracle& func, Logger& logger, const Eigen::VectorXd& w0, size_t maxiter, double alpha,
                     const std::string& sampling_scheme, const std::string& init_scheme);
 
+/* Method SAG for **linear models** */
+Eigen::VectorXd SAGA(const LogRegOracle& func, Logger& logger, const Eigen::VectorXd& w0, size_t maxiter, double alpha,
+                    const std::string& sampling_scheme, const std::string& init_scheme);
+
+/* Method SAG for **linear models** */
+Eigen::VectorXd ASVRG(const LogRegOracle& func, Logger& logger, const Eigen::VectorXd& w0, size_t maxiter, size_t epoch, double alpha, double beta,
+                    const std::string& sampling_scheme, const std::string& init_scheme);
+
 /* Method NIM for **linear models** */
 Eigen::VectorXd NIM(const LogRegOracle& func, Logger& logger, const Eigen::VectorXd& w0, size_t maxiter, double alpha,
                     const std::string& sampling_scheme, const std::string& init_scheme, bool exact=false);

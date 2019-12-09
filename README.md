@@ -26,6 +26,8 @@ Example 2: executing
 
 runs the A-CIAG method on the dataset a9a with a minibatch size of 5, with a step size of 0.00015 / L and extrapolation rate of 0.95.
 
-The program has been compiled and tested on a computer running MacOS X 10.13 with gcc 4.2.1.
+Updated on Dec. 9, 2019: other solvers including AccSVRG and SAGA have been included.
+
+The program has been compiled and tested on a computer running MacOS X 10.15.1 with gcc 4.2.1.
 
 <b>Warning</b>: The authors have only tested the implementation for the methods CIAG, A-CIAG, NIM and SAG. Be reminded that the implementation have not been fully optimized.
