@@ -1,6 +1,6 @@
 # ciag
 
-MATLAB and C++ implementation for the paper "On Curvature-aided Incremental Aggregated Gradient Methods" by H.-T. Wai, W. Shi, C. A. Uribe, A. Nedic, A. Scaglione (online: https://arxiv.org/abs/1806.00125)
+MATLAB and C++ implementation for the paper "Accelerating Incremental Gradient Optimization with Curvature Information" by H.-T. Wai, W. Shi, C. A. Uribe, A. Nedic, A. Scaglione (online: https://arxiv.org/abs/1806.00125, previously titled "On Curvature-aided Incremental Aggregated Gradient Methods")
 
 The C++ programs are developed from the code base in https://github.com/arodomanov/nim_icml16_code, written by Anton Rodomanov based on the paper "A Superlinearly-Convergent Proximal Newton-type Method for the Optimization of Finite Sums", in Proc. of ICML, July, 2016.
 
